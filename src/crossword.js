@@ -163,6 +163,20 @@ class Crossword {
       y: this.cursorY,
     };
   }
+
+  currentWordRange() {
+    const x = this.cursorX;
+    const y = this.cursorY;
+    let clue = null;
+    const mapping = this.clueMap[y][x];
+    if (this.direction === 0) {
+      clue = this.cluesAcross[mapping.across.index];
+      return clue.a.split("").map((_, i) => [clue.row, clue.col + i]);
+    } else if (this.direction === 1) {
+      clue = this.cluesDown[mapping.down.index];
+      return clue.a.split("").map((_, i) => [clue.row + i, clue.col]);
+    }
+  }
 }
 
 export default Crossword;

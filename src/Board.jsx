@@ -14,7 +14,9 @@ const GameContext = createContext({
 const Cell = ({ content, reference, x, y }) => {
   let className = "cell";
   let displayContent = content;
-  const { onCellClick, cursorX, cursorY, clueMap } = useContext(GameContext);
+  const { onCellClick, cursorX, cursorY, clueMap, currRange } = useContext(
+    GameContext
+  );
   const onClick = useCallback(() => {
     if (content !== null) {
       onCellClick(x, y);
@@ -32,6 +34,10 @@ const Cell = ({ content, reference, x, y }) => {
 
   if (content !== "" && content !== null && content !== reference) {
     className += " incorrect";
+  }
+
+  if (currRange.filter((r) => r[0] === y && r[1] === x).length > 0) {
+    className += " in-range";
   }
 
   let indicator = null;
@@ -68,31 +74,38 @@ const Row = ({ row, refRow, y }) => {
 const Board = ({ game }) => {
   const [cursorX, setCursorX] = useState(0);
   const [cursorY, setCursorY] = useState(0);
+  const [currRange, setCurrRange] = useState([]);
   const [direction, setDirection] = useState(0);
   const [lastGuessed, setLastGuessed] = useState(null);
+  const setBoardCursor = useCallback((game) => {
+    setCursorX(game.cursorX);
+    setCursorY(game.cursorY);
+    setCurrRange(game.currentWordRange());
+    setDirection(game.direction);
+  }, []);
   const onCellClick = useCallback(
     (newX, newY) => {
       if (game.cursorX === newX && game.cursorY === newY) {
         game.changeDirection();
       }
-      let { x, y, direction } = game.setCursor(newX, newY);
-      setCursorX(x);
-      setCursorY(y);
-      setDirection(direction);
+      game.setCursor(newX, newY);
+      setBoardCursor(game);
     },
-    [game]
+    [game, setBoardCursor]
   );
   const onKeydown = useCallback(
     (event) => {
-      let { x, y } = game.keypress(event.key);
+      game.keypress(event.key);
       setLastGuessed(`${game.cursorX}:${game.cursorY}:${event.key}`);
-      setCursorX(x);
-      setCursorY(y);
+      setBoardCursor(game);
       event.preventDefault();
       return false;
     },
-    [game]
+    [game, setBoardCursor]
   );
+  useEffect(() => {
+    setBoardCursor(game);
+  }, [game, setBoardCursor]);
   useEffect(() => {
     document.addEventListener("keydown", onKeydown);
     return () => {
@@ -105,6 +118,7 @@ const Board = ({ game }) => {
         value={{
           cursorX,
           cursorY,
+          currRange,
           direction,
           onCellClick,
           lastGuessed,
