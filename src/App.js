@@ -2,6 +2,9 @@ import "./App.css";
 import React, { useEffect, useState } from "react";
 import xml2js from "xml2js";
 
+import Crossword from "./crossword";
+import Board from "./Board";
+
 const corsAnywhere = "https://cors-anywhere.herokuapp.com/";
 
 function App() {
@@ -20,10 +23,11 @@ function App() {
       .then((res) => res.text())
       .then((text) => xml2js.parseStringPromise(text))
       .then((obj) => {
-        console.log(obj);
+        const game = new Crossword(obj);
+        setCrossword(game);
       });
   }, []);
-  return <div className="App"></div>;
+  return <div className="App">{crossword && <Board game={crossword} />}</div>;
 }
 
 export default App;
