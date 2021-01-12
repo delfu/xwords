@@ -14,7 +14,7 @@ const GameContext = createContext({
 const Cell = ({ content, reference, x, y }) => {
   let className = "cell";
   let displayContent = content;
-  const { onCellClick, cursorX, cursorY } = useContext(GameContext);
+  const { onCellClick, cursorX, cursorY, clueMap } = useContext(GameContext);
   const onClick = useCallback(() => {
     if (content !== null) {
       onCellClick(x, y);
@@ -30,12 +30,20 @@ const Cell = ({ content, reference, x, y }) => {
     className += " selected";
   }
 
-  if (content !== " " && content !== null && content !== reference) {
+  if (content !== "" && content !== null && content !== reference) {
     className += " incorrect";
+  }
+
+  let indicator = null;
+  if (clueMap[y][x] && clueMap[y][x].across.isStart) {
+    indicator = <span className="indicator">{clueMap[y][x].across.index}</span>;
+  } else if (clueMap[y][x] && clueMap[y][x].down.isStart) {
+    indicator = <span className="indicator">{clueMap[y][x].down.index}</span>;
   }
 
   return (
     <span className={className} onClick={onClick}>
+      {indicator}
       {displayContent}
     </span>
   );
@@ -100,6 +108,7 @@ const Board = ({ game }) => {
           direction,
           onCellClick,
           lastGuessed,
+          clueMap: game.clueMap,
         }}
       >
         {game.guesses.map((row, r) => {

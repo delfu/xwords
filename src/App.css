@@ -15,6 +15,7 @@
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
+  position: relative;
 }
 .cell.blank {
   background-color: black;
@@ -26,4 +27,14 @@
 }
 .cell.incorrect {
   color: red;
+}
+.cell > .indicator {
+  color: black;
+  position: absolute;
+  font-size: 0.1em;
+  top: 0px;
+  left: 0px;
+}
+.cell.selected > .indicator {
+  color: white;
 }

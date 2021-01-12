@@ -1,48 +1,71 @@
+function clueParsing(clues, index, width, height) {
+  const entry = clues[index][0].$;
+  const row = ((parseInt(entry.n) - 1) / width) >> 0;
+  const col = (parseInt(entry.n) - 1) % width;
+  entry.row = row;
+  entry.col = col;
+  return entry;
+}
 class Crossword {
-  reference = null;
-  guesses = null;
+  reference = [];
+  guesses = [];
+  clueMap = [];
   width = 0;
   height = 0;
   cursorX = 0;
   cursorY = 0;
   direction = 0; // 0 for horizontal, 1 for vert
+  cluesDown = {};
+  cluesAcross = {};
   constructor(data) {
     data = data.crossword;
     this.width = parseInt(data.Width[0].$.v || 0);
     this.height = parseInt(data.Height[0].$.v || 0);
 
-    const across = data.across[0];
-    const acrossKeys = Object.keys(across).map((a) => {
-      const entry = across[a][0].$;
-      const row = ((parseInt(entry.n) - 1) / this.width) >> 0;
-      const col = (parseInt(entry.n) - 1) % this.width;
-      entry.row = row;
-      entry.col = col;
-      return entry;
+    const parsedAcross = Object.keys(data.across[0]).map((a) =>
+      clueParsing(data.across[0], a, this.width, this.height)
+    );
+    const parsedDown = Object.keys(data.down[0]).map((a) =>
+      clueParsing(data.down[0], a, this.width, this.height)
+    );
+    parsedDown.forEach((clue) => {
+      this.cluesDown[clue.cn] = clue;
     });
-    this.reference = [];
-    this.guesses = [];
+    parsedAcross.forEach((clue) => {
+      this.cluesAcross[clue.cn] = clue;
+    });
     for (let i = 0; i < this.height; i++) {
       const row = [];
       for (let j = 0; j < this.width; j++) {
         row.push(null);
       }
-      this.guesses.push(row);
-      const refRow = [];
-      for (let j = 0; j < this.width; j++) {
-        refRow.push(null);
-      }
-      this.reference.push(refRow);
+      this.guesses.push([...row]);
+      this.reference.push([...row]);
+      this.clueMap.push([...row]);
     }
 
-    for (let i = 0; i < acrossKeys.length; i++) {
-      const entry = acrossKeys[i];
+    for (let i = 0; i < parsedAcross.length; i++) {
+      const entry = parsedAcross[i];
       const { row, col } = entry;
       for (let c = 0; c < entry.a.length; c++) {
-        this.reference[row][c + col] = entry.a[c];
-        this.guesses[row][c + col] = "";
+        this.reference[row][col + c] = entry.a[c];
+        this.clueMap[row][col + c] = {
+          across: {
+            index: entry.cn,
+            isStart: c === 0,
+          },
+        };
+        this.guesses[row][col + c] = "";
       }
     }
+    parsedDown.forEach((entry) => {
+      for (let r = 0; r < entry.a.length; r++) {
+        this.clueMap[entry.row + r][entry.col].down = {
+          index: entry.cn,
+          isStart: r === 0,
+        };
+      }
+    });
   }
 
   setCursor(x, y) {

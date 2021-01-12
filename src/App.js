@@ -24,6 +24,7 @@ function App() {
       .then((text) => xml2js.parseStringPromise(text))
       .then((obj) => {
         const game = new Crossword(obj);
+        window.game = game;
         setCrossword(game);
       });
   }, []);
