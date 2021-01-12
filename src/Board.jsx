@@ -60,12 +60,17 @@ const Row = ({ row, refRow, y }) => {
 const Board = ({ game }) => {
   const [cursorX, setCursorX] = useState(0);
   const [cursorY, setCursorY] = useState(0);
+  const [direction, setDirection] = useState(0);
   const [lastGuessed, setLastGuessed] = useState(null);
   const onCellClick = useCallback(
     (newX, newY) => {
-      let { x, y } = game.setCursor(newX, newY);
+      if (game.cursorX === newX && game.cursorY === newY) {
+        game.changeDirection();
+      }
+      let { x, y, direction } = game.setCursor(newX, newY);
       setCursorX(x);
       setCursorY(y);
+      setDirection(direction);
     },
     [game]
   );
@@ -92,6 +97,7 @@ const Board = ({ game }) => {
         value={{
           cursorX,
           cursorY,
+          direction,
           onCellClick,
           lastGuessed,
         }}

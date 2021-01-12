@@ -57,30 +57,33 @@ class Crossword {
   }
 
   _movement(inner) {
+    let newX = this.cursorX;
+    let newY = this.cursorY;
     do {
-      inner();
+      const { x, y } = inner(newX, newY);
+      newX = x;
+      newY = y;
     } while (
-      this.cursorX < this.width &&
-      this.cursorY < this.height &&
-      this.reference[this.cursorY][this.cursorX] === null
+      newX < this.width &&
+      newY < this.height &&
+      newX >= 0 &&
+      newY >= 0 &&
+      this.reference[newY][newX] === null
     );
-    return this.setCursor(
-      Math.max(0, Math.min(this.cursorX, this.width - 1)),
-      Math.max(0, Math.min(this.cursorY, this.height - 1))
-    );
+    return this.setCursor(newX, newY);
   }
 
   right() {
-    return this._movement(() => (this.cursorX += 1));
+    return this._movement((x, y) => ({ x: x + 1, y }));
   }
   down() {
-    return this._movement(() => (this.cursorY += 1));
+    return this._movement((x, y) => ({ x, y: y + 1 }));
   }
   up() {
-    return this._movement(() => (this.cursorY -= 1));
+    return this._movement((x, y) => ({ x, y: y - 1 }));
   }
   left() {
-    return this._movement(() => (this.cursorX -= 1));
+    return this._movement((x, y) => ({ x: x - 1, y }));
   }
 
   next() {
