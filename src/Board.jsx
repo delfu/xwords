@@ -5,10 +5,17 @@ import React, {
   useContext,
   useEffect,
 } from "react";
+
+import { CluesContext } from "./App";
+
 const GameContext = createContext({
   cursorX: 0,
   cursorY: 0,
+  currRange: [],
+  direction: 0,
   onCellClick: (x, y) => {},
+  lastGuessed: "",
+  clueMap: {},
 });
 
 const Cell = ({ content, reference, x, y }) => {
@@ -77,12 +84,17 @@ const Board = ({ game }) => {
   const [currRange, setCurrRange] = useState([]);
   const [direction, setDirection] = useState(0);
   const [lastGuessed, setLastGuessed] = useState(null);
-  const setBoardCursor = useCallback((game) => {
-    setCursorX(game.cursorX);
-    setCursorY(game.cursorY);
-    setCurrRange(game.currentWordRange());
-    setDirection(game.direction);
-  }, []);
+  const { onCellChanged } = useContext(CluesContext);
+  const setBoardCursor = useCallback(
+    (game) => {
+      setCursorX(game.cursorX);
+      setCursorY(game.cursorY);
+      setCurrRange(game.currentWordRange());
+      setDirection(game.direction);
+      onCellChanged();
+    },
+    [onCellChanged]
+  );
   const onCellClick = useCallback(
     (newX, newY) => {
       if (game.cursorX === newX && game.cursorY === newY) {

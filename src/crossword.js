@@ -177,6 +177,13 @@ class Crossword {
       return clue.a.split("").map((_, i) => [clue.row + i, clue.col]);
     }
   }
+
+  currentClueMapping() {
+    const x = this.cursorX;
+    const y = this.cursorY;
+    const mapping = this.clueMap[y][x];
+    return mapping;
+  }
 }
 
 export default Crossword;

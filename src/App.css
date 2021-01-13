@@ -1,5 +1,6 @@
 .board {
   font-family: "Courier New", monospace;
+  font-size: 30px;
 }
 
 .cell {
@@ -39,5 +40,8 @@
   color: white;
 }
 .cell.in-range {
+  border: 2px solid blue;
+}
+.clue-list .selected {
   border: 2px solid blue;
 }
