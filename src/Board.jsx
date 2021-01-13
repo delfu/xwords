@@ -107,7 +107,7 @@ const Board = ({ game }) => {
   );
   const onKeydown = useCallback(
     (event) => {
-      game.keypress(event.key);
+      game.keypress(event.key, event.shiftKey);
       setLastGuessed(`${game.cursorX}:${game.cursorY}:${event.key}`);
       setBoardCursor(game);
       event.preventDefault();

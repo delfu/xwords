@@ -124,22 +124,51 @@ class Crossword {
     }
   }
 
+  _isWordCompleted(clue, direction) {
+    for (let i = 0; i < clue.a.length; i++) {
+      const y = clue.row + (direction === 1 ? i : 0);
+      const x = clue.col + (direction === 0 ? i : 0);
+      if (this.guesses[y][x] !== this.reference[y][x]) {
+        return {
+          isComplete: false,
+          x,
+          y,
+        };
+      }
+    }
+    return {
+      isComplete: true,
+    };
+  }
+
   // goes to the the next word with empty slot
-  nextWord() {
+  _nextWord(inc = 1) {
     const currClue = this.currentClue();
     const clues = this.direction === 0 ? this.cluesAcross : this.cluesDown;
     const indices = Object.keys(clues);
-    const currClueIndex = indices.findIndex((cn) => cn === currClue.cn);
-    if (currClueIndex + 1 >= indices.length) {
-      return this.step();
+    let currClueIndex = indices.findIndex((cn) => cn === currClue.cn);
+    while (currClueIndex + inc < indices.length && currClueIndex + inc >= 0) {
+      const nextClue = clues[indices[currClueIndex + inc]];
+      const completion = this._isWordCompleted(nextClue, this.direction);
+      if (completion.isComplete) {
+        currClueIndex += inc;
+      } else {
+        return this.setCursor(completion.x, completion.y);
+      }
     }
-    const nextClue = clues[indices[currClueIndex + 1]];
+    const nextClue = clues[indices[currClueIndex]];
     return this.setCursor(nextClue.col, nextClue.row);
+  }
+  nextWord() {
+    return this._nextWord(1);
+  }
+  prevWord() {
+    return this._nextWord(-1);
   }
   changeDirection() {
     this.direction = (this.direction + 1) % 2;
   }
-  keypress(char) {
+  keypress(char, shiftKey) {
     char = char.toUpperCase();
     const isAlpha = /[A-Z]/.test(char);
 
@@ -154,7 +183,11 @@ class Crossword {
     } else if (char === "ENTER") {
       this.changeDirection();
     } else if (char === "TAB") {
-      this.nextWord();
+      if (shiftKey) {
+        this.prevWord();
+      } else {
+        this.nextWord();
+      }
     } else if (char === "BACKSPACE") {
       this.guesses[this.cursorY][this.cursorX] = " ";
       this.prev();
