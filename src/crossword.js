@@ -17,6 +17,8 @@ class Crossword {
   direction = 0; // 0 for horizontal, 1 for vert
   cluesDown = {};
   cluesAcross = {};
+  corrects = 0;
+  total = 0;
   constructor(data) {
     data = data.crossword;
     this.width = parseInt(data.Width[0].$.v || 0);
@@ -56,6 +58,7 @@ class Crossword {
           },
         };
         this.guesses[row][col + c] = "";
+        this.total++;
       }
     }
     parsedDown.forEach((entry) => {
@@ -168,6 +171,21 @@ class Crossword {
   changeDirection() {
     this.direction = (this.direction + 1) % 2;
   }
+  _updateGuess(char) {
+    if (
+      this.guesses[this.cursorY][this.cursorX] ===
+      this.reference[this.cursorY][this.cursorX]
+    ) {
+      this.corrects--;
+    }
+    this.guesses[this.cursorY][this.cursorX] = char;
+    if (
+      this.guesses[this.cursorY][this.cursorX] ===
+      this.reference[this.cursorY][this.cursorX]
+    ) {
+      this.corrects++;
+    }
+  }
   keypress(char, shiftKey) {
     char = char.toUpperCase();
     const isAlpha = /[A-Z]/.test(char);
@@ -189,10 +207,11 @@ class Crossword {
         this.nextWord();
       }
     } else if (char === "BACKSPACE") {
-      this.guesses[this.cursorY][this.cursorX] = " ";
+      // erased a correct guess
+      this._updateGuess(" ");
       this.prev();
     } else if (isAlpha && char.length === 1) {
-      this.guesses[this.cursorY][this.cursorX] = char;
+      this._updateGuess(char);
       if (char === this.reference[this.cursorY][this.cursorX]) {
         const currRange = this.currentWordRange();
         const currCharPos = currRange[currRange.length - 1];
@@ -240,6 +259,10 @@ class Crossword {
     const y = this.cursorY;
     const mapping = this.clueMap[y][x];
     return mapping;
+  }
+
+  isOver() {
+    return this.total === this.corrects;
   }
 }
 

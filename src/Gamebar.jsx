@@ -2,11 +2,9 @@ import React, { useEffect, useState, useContext } from "react";
 import { GameContext } from "./App";
 
 const Gamebar = () => {
-  const [isPlaying, setIsPlaying] = useState(true);
   const [secs, setSecs] = useState(0);
-  const { onPlayPause } = useContext(GameContext);
+  const { onPlayPause, isPlaying } = useContext(GameContext);
   const togglePlay = () => {
-    setIsPlaying(!isPlaying);
     onPlayPause(!isPlaying);
   };
 

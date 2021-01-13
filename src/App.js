@@ -11,14 +11,17 @@ const corsAnywhere = "https://cors-anywhere.herokuapp.com/";
 
 export const GameContext = createContext({
   currentClueIndices: {},
+  isPlaying: true,
   onCellChanged: () => {},
   onPlayPause: (b) => {},
+  onOver: () => {},
 });
 
 function App() {
   const [crossword, setCrossword] = useState();
   const [currentClueIndices, setCurrentClueIndices] = useState({});
   const [isPlaying, setIsPlaying] = useState(true);
+  const [isOver, setIsOver] = useState(false);
   useEffect(() => {
     let [month, date, year] = new Date().toLocaleDateString("en-US").split("/");
     month = month.padStart(2, "0");
@@ -55,6 +58,11 @@ function App() {
     setIsPlaying(isPlaying);
   };
 
+  const onOver = () => {
+    onPlayPause(false);
+    setIsOver(true);
+  };
+
   return (
     <div className="App">
       {crossword && (
@@ -62,8 +70,10 @@ function App() {
           <GameContext.Provider
             value={{
               currentClueIndices,
+              isPlaying,
               onCellChanged,
               onPlayPause,
+              onOver,
             }}
           >
             <Gamebar />
@@ -85,7 +95,7 @@ function App() {
                   />
                 </div>
               </div>
-              <div className="veil"></div>
+              <div className="veil">{isOver && <div>Congrats!</div>}</div>
             </div>
           </GameContext.Provider>
         </div>

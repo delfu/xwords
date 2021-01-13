@@ -84,7 +84,7 @@ const Board = ({ game }) => {
   const [currRange, setCurrRange] = useState([]);
   const [direction, setDirection] = useState(0);
   const [lastGuessed, setLastGuessed] = useState(null);
-  const { onCellChanged } = useContext(GameContext);
+  const { onCellChanged, onOver } = useContext(GameContext);
   const setBoardCursor = useCallback(
     (game) => {
       setCursorX(game.cursorX);
@@ -110,10 +110,13 @@ const Board = ({ game }) => {
       game.keypress(event.key, event.shiftKey);
       setLastGuessed(`${game.cursorX}:${game.cursorY}:${event.key}`);
       setBoardCursor(game);
+      if (game.isOver()) {
+        onOver();
+      }
       event.preventDefault();
       return false;
     },
-    [game, setBoardCursor]
+    [game, setBoardCursor, onOver]
   );
   useEffect(() => {
     setBoardCursor(game);
