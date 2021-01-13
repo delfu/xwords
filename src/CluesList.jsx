@@ -11,7 +11,7 @@ function clueKey(cn, direction) {
   return `clue-${direction}-${cn}`;
 }
 
-const CluesList = ({ game, direction }) => {
+const CluesList = ({ game, direction, highlighted }) => {
   const [currCn, setCurrCn] = useState(0);
 
   const cluesMap = direction === 0 ? game.cluesAcross : game.cluesDown;
@@ -28,8 +28,6 @@ const CluesList = ({ game, direction }) => {
       if (!refs[id]) {
         return;
       }
-
-      console.log("scrolling to ", id);
 
       refs[id].current.scrollIntoView({
         behavior: "auto",
@@ -54,11 +52,11 @@ const CluesList = ({ game, direction }) => {
   const className = useCallback(
     (clue) => {
       if (clue.cn === currCn) {
-        return "selected";
+        return highlighted ? "selected highlighted" : "selected";
       }
       return null;
     },
-    [currCn]
+    [currCn, highlighted]
   );
 
   return (
@@ -69,7 +67,7 @@ const CluesList = ({ game, direction }) => {
           <div
             key={clueKey(clue.cn, direction)}
             ref={refs[clueKey(clue.cn, direction)]}
-            className={className(clue)}
+            className={className(clue, highlighted)}
           >
             <span>{clue.cn}.&nbsp;</span>
             {decodeURIComponent(clue.c)}

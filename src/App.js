@@ -44,13 +44,14 @@ function App() {
     setCurrentClueIndices({
       across: curr.across.index,
       down: curr.down.index,
+      highlightDirection: crossword.direction,
     });
   }, [crossword]);
 
   return (
     <div className="App">
       {crossword && (
-        <div>
+        <div className="game-area">
           <CluesContext.Provider
             value={{
               currentClueIndices,
@@ -58,8 +59,18 @@ function App() {
             }}
           >
             <Board game={crossword} />
-            <CluesList direction={0} game={crossword} />
-            <CluesList direction={1} game={crossword} />
+            <div className="clues-area">
+              <CluesList
+                direction={0}
+                highlighted={currentClueIndices.highlightDirection === 0}
+                game={crossword}
+              />
+              <CluesList
+                direction={1}
+                highlighted={currentClueIndices.highlightDirection === 1}
+                game={crossword}
+              />
+            </div>
           </CluesContext.Provider>
         </div>
       )}

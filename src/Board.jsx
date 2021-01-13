@@ -43,7 +43,7 @@ const Cell = ({ content, reference, x, y }) => {
     className += " incorrect";
   }
 
-  if (currRange.filter((r) => r[0] === y && r[1] === x).length > 0) {
+  if (currRange.filter((r) => r[0] === x && r[1] === y).length > 0) {
     className += " in-range";
   }
 

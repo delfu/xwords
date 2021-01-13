@@ -3,7 +3,20 @@ body {
   font-size: 30px;
 }
 
+.game-area {
+  display: flex;
+  flex-direction: row;
+}
+
+.clues-area {
+  display: flex;
+  flex-direction: column;
+}
+
 /* Board */
+.board {
+  min-width: max-content;
+}
 .cell {
   padding: 2px;
   border: 2px solid #919191;
@@ -52,4 +65,8 @@ body {
 }
 .clue-list .selected {
   border: 2px solid blue;
+}
+.clue-list .highlighted {
+  background-color: #5555ff;
+  color: white;
 }

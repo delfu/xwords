@@ -109,7 +109,7 @@ class Crossword {
     return this._movement((x, y) => ({ x: x - 1, y }));
   }
 
-  next() {
+  step() {
     if (this.direction === 0) {
       return this.right();
     } else if (this.direction === 1) {
@@ -123,14 +123,22 @@ class Crossword {
       return this.up();
     }
   }
+
+  // goes to the the next word with empty slot
   nextWord() {
-    // TODO: implement
-    return this.next();
+    const currClue = this.currentClue();
+    const clues = this.direction === 0 ? this.cluesAcross : this.cluesDown;
+    const indices = Object.keys(clues);
+    const currClueIndex = indices.findIndex((cn) => cn === currClue.cn);
+    if (currClueIndex + 1 >= indices.length) {
+      return this.step();
+    }
+    const nextClue = clues[indices[currClueIndex + 1]];
+    return this.setCursor(nextClue.col, nextClue.row);
   }
   changeDirection() {
     this.direction = (this.direction + 1) % 2;
   }
-
   keypress(char) {
     char = char.toUpperCase();
     const isAlpha = /[A-Z]/.test(char);
@@ -153,10 +161,18 @@ class Crossword {
     } else if (isAlpha && char.length === 1) {
       this.guesses[this.cursorY][this.cursorX] = char;
       if (char === this.reference[this.cursorY][this.cursorX]) {
-        this.next();
+        const currRange = this.currentWordRange();
+        const currCharPos = currRange[currRange.length - 1];
+        const isEnd =
+          currCharPos[0] === this.cursorX && currCharPos[1] === this.cursorY;
+        if (isEnd) {
+          this.nextWord();
+        } else {
+          this.step();
+        }
       }
     } else if (char === " ") {
-      this.next();
+      this.step();
     }
     return {
       x: this.cursorX,
@@ -164,17 +180,25 @@ class Crossword {
     };
   }
 
-  currentWordRange() {
+  currentClue() {
     const x = this.cursorX;
     const y = this.cursorY;
     let clue = null;
     const mapping = this.clueMap[y][x];
     if (this.direction === 0) {
       clue = this.cluesAcross[mapping.across.index];
-      return clue.a.split("").map((_, i) => [clue.row, clue.col + i]);
     } else if (this.direction === 1) {
       clue = this.cluesDown[mapping.down.index];
-      return clue.a.split("").map((_, i) => [clue.row + i, clue.col]);
+    }
+    return clue;
+  }
+
+  currentWordRange() {
+    const clue = this.currentClue();
+    if (this.direction === 0) {
+      return clue.a.split("").map((_, i) => [clue.col + i, clue.row]);
+    } else if (this.direction === 1) {
+      return clue.a.split("").map((_, i) => [clue.col, clue.row + i]);
     }
   }
 
