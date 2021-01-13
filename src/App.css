@@ -1,8 +1,9 @@
-.board {
+body {
   font-family: "Courier New", monospace;
   font-size: 30px;
 }
 
+/* Board */
 .cell {
   padding: 2px;
   border: 2px solid #919191;
@@ -32,8 +33,9 @@
 .cell > .indicator {
   color: black;
   position: absolute;
-  font-size: 0.1em;
-  top: 0px;
+  font-size: 0.5em;
+  line-height: 0.5em;
+  top: 4px;
   left: 0px;
 }
 .cell.selected > .indicator {
@@ -41,6 +43,12 @@
 }
 .cell.in-range {
   border: 2px solid blue;
+}
+
+/* Clues */
+.clue-list {
+  max-height: 150px;
+  overflow: scroll;
 }
 .clue-list .selected {
   border: 2px solid blue;
