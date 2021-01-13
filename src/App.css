@@ -6,11 +6,40 @@ body {
 .game-area {
   display: flex;
   flex-direction: row;
+  margin: 10px;
+}
+
+.game-container {
+  position: relative;
+}
+.game-container.paused .veil {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: gray;
 }
 
 .clues-area {
   display: flex;
   flex-direction: column;
+  margin: 0 10px;
+}
+
+.gamebar {
+  color: #5555ff;
+  font-size: 20px;
+  margin: 10px;
+  padding: 5px 0;
+}
+
+.gamebar .item {
+  margin-right: 20px;
+}
+
+.button {
+  cursor: pointer;
 }
 
 /* Board */

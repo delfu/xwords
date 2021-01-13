@@ -6,9 +6,9 @@ import React, {
   useEffect,
 } from "react";
 
-import { CluesContext } from "./App";
+import { GameContext } from "./App";
 
-const GameContext = createContext({
+const BoardContext = createContext({
   cursorX: 0,
   cursorY: 0,
   currRange: [],
@@ -22,7 +22,7 @@ const Cell = ({ content, reference, x, y }) => {
   let className = "cell";
   let displayContent = content;
   const { onCellClick, cursorX, cursorY, clueMap, currRange } = useContext(
-    GameContext
+    BoardContext
   );
   const onClick = useCallback(() => {
     if (content !== null) {
@@ -84,7 +84,7 @@ const Board = ({ game }) => {
   const [currRange, setCurrRange] = useState([]);
   const [direction, setDirection] = useState(0);
   const [lastGuessed, setLastGuessed] = useState(null);
-  const { onCellChanged } = useContext(CluesContext);
+  const { onCellChanged } = useContext(GameContext);
   const setBoardCursor = useCallback(
     (game) => {
       setCursorX(game.cursorX);
@@ -126,7 +126,7 @@ const Board = ({ game }) => {
   }, [onKeydown]);
   return (
     <div className="board">
-      <GameContext.Provider
+      <BoardContext.Provider
         value={{
           cursorX,
           cursorY,
@@ -140,7 +140,7 @@ const Board = ({ game }) => {
         {game.guesses.map((row, r) => {
           return <Row row={row} refRow={game.reference[r]} key={r} y={r} />;
         })}
-      </GameContext.Provider>
+      </BoardContext.Provider>
     </div>
   );
 };

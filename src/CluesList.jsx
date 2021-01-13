@@ -5,7 +5,7 @@ import React, {
   useState,
   createRef,
 } from "react";
-import { CluesContext } from "./App";
+import { GameContext } from "./App";
 
 function clueKey(cn, direction) {
   return `clue-${direction}-${cn}`;
@@ -16,7 +16,7 @@ const CluesList = ({ game, direction, highlighted }) => {
 
   const cluesMap = direction === 0 ? game.cluesAcross : game.cluesDown;
   const clues = Object.keys(cluesMap).map((id) => cluesMap[id]);
-  const { currentClueIndices } = useContext(CluesContext);
+  const { currentClueIndices } = useContext(GameContext);
 
   const refs = clues.reduce((acc, clue) => {
     acc[clueKey(clue.cn, direction)] = createRef();
