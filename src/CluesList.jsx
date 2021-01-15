@@ -11,6 +11,14 @@ function clueKey(cn, direction) {
   return `clue-${direction}-${cn}`;
 }
 
+function decode(string) {
+  const matches = string.match(/%[0-9][0-9]/g) || [];
+  matches.forEach((m) => {
+    string = string.replaceAll(m, decodeURIComponent(m));
+  });
+  return string;
+}
+
 const CluesList = ({ game, direction, highlighted }) => {
   const [currCn, setCurrCn] = useState(0);
 
@@ -70,7 +78,7 @@ const CluesList = ({ game, direction, highlighted }) => {
             className={className(clue, highlighted)}
           >
             <span>{clue.cn}.&nbsp;</span>
-            {decodeURIComponent(clue.c)}
+            {decode(clue.c)}
           </div>
         ))}
       </div>

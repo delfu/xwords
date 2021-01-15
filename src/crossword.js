@@ -224,7 +224,7 @@ class Crossword {
         }
       }
     } else if (char === " ") {
-      this.step();
+      this.changeDirection();
     }
     return {
       x: this.cursorX,
