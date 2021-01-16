@@ -160,6 +160,12 @@ class Crossword {
       }
     }
     const nextClue = clues[indices[currClueIndex]];
+    if (nextClue === currClue) {
+      this.setCursor(0, 0);
+      this.changeDirection();
+      return this._nextWord(0);
+    }
+
     return this.setCursor(nextClue.col, nextClue.row);
   }
   nextWord() {
@@ -167,6 +173,10 @@ class Crossword {
   }
   prevWord() {
     return this._nextWord(-1);
+  }
+  isBeginningOfWord() {
+    const currClue = this.currentClue();
+    return this.cursorX === currClue.col && this.cursorY === currClue.row;
   }
   changeDirection() {
     this.direction = (this.direction + 1) % 2;
@@ -207,9 +217,10 @@ class Crossword {
         this.nextWord();
       }
     } else if (char === "BACKSPACE") {
-      // erased a correct guess
       this._updateGuess(" ");
-      this.prev();
+      if (!this.isBeginningOfWord()) {
+        this.prev();
+      }
     } else if (isAlpha && char.length === 1) {
       this._updateGuess(char);
       if (char === this.reference[this.cursorY][this.cursorX]) {
