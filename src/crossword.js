@@ -159,11 +159,17 @@ class Crossword {
         return this.setCursor(completion.x, completion.y);
       }
     }
-    const nextClue = clues[indices[currClueIndex]];
+    let nextClue = clues[indices[currClueIndex]];
     if (nextClue === currClue) {
-      this.setCursor(0, 0);
       this.changeDirection();
-      return this._nextWord(0);
+      nextClue = inc > 0 ? this.firstClue() : this.lastClue();
+      this.setCursor(nextClue.col, nextClue.row);
+      const completion = this._isWordCompleted(nextClue, this.direction);
+      if (completion.isComplete) {
+        return this._nextWord(inc);
+      } else {
+        return this.setCursor(completion.x, completion.y);
+      }
     }
 
     return this.setCursor(nextClue.col, nextClue.row);
@@ -254,6 +260,29 @@ class Crossword {
       clue = this.cluesDown[mapping.down.index];
     }
     return clue;
+  }
+
+  firstClue() {
+    if (this.direction === 0) {
+      const firstKey = Object.keys(this.cluesAcross)[0];
+      return this.cluesAcross[firstKey];
+    } else if (this.direction === 1) {
+      const firstKey = Object.keys(this.cluesDown)[0];
+      return this.cluesDown[firstKey];
+    }
+  }
+  lastClue() {
+    if (this.direction === 0) {
+      const lastKey = Object.keys(this.cluesAcross)[
+        Object.keys(this.cluesAcross).length - 1
+      ];
+      return this.cluesAcross[lastKey];
+    } else if (this.direction === 1) {
+      const lastKey = Object.keys(this.cluesDown)[
+        Object.keys(this.cluesDown).length - 1
+      ];
+      return this.cluesDown[lastKey];
+    }
   }
 
   currentWordRange() {
