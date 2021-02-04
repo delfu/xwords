@@ -3,7 +3,7 @@ import { GameContext } from "./App";
 
 const Gamebar = () => {
   const [secs, setSecs] = useState(0);
-  const { onPlayPause, isPlaying } = useContext(GameContext);
+  const { onPlayPause, isPlaying, title } = useContext(GameContext);
   const togglePlay = () => {
     onPlayPause(!isPlaying);
   };
@@ -18,7 +18,7 @@ const Gamebar = () => {
     return () => {
       clearInterval(timer);
     };
-  }, [isPlaying]);
+  }, [isPlaying, title]);
   return (
     <div className="gamebar">
       {!isPlaying && (
@@ -36,6 +36,9 @@ const Gamebar = () => {
       <span className="item">
         {((secs / 60) >> 0).toString().padStart(2, "0")}:
         {(secs % 60).toString().padStart(2, "0")}
+      </span>
+      <span className="item">
+        <h1 style={{ display: "inline" }}>{title}</h1>
       </span>
     </div>
   );

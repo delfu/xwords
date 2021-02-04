@@ -12,6 +12,7 @@ const corsAnywhere = "https://cors-anywhere.herokuapp.com/";
 export const GameContext = createContext({
   currentClueIndices: {},
   isPlaying: true,
+  title: "",
   onCellChanged: () => {},
   onPlayPause: (b) => {},
   onOver: () => {},
@@ -19,6 +20,7 @@ export const GameContext = createContext({
 
 function App() {
   const [crossword, setCrossword] = useState();
+  const [title, setTitle] = useState();
   const [currentClueIndices, setCurrentClueIndices] = useState({});
   const [isPlaying, setIsPlaying] = useState(true);
   const [isOver, setIsOver] = useState(false);
@@ -39,6 +41,7 @@ function App() {
         const game = new Crossword(obj);
         window.game = game;
         setCrossword(game);
+        setTitle(game.title);
       });
   }, []);
 
@@ -71,6 +74,7 @@ function App() {
             value={{
               currentClueIndices,
               isPlaying,
+              title,
               onCellChanged,
               onPlayPause,
               onOver,

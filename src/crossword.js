@@ -19,8 +19,10 @@ class Crossword {
   cluesAcross = {};
   corrects = 0;
   total = 0;
+  title = "";
   constructor(data) {
     data = data.crossword;
+    this.title = data.Title[0].$.v;
     this.width = parseInt(data.Width[0].$.v || 0);
     this.height = parseInt(data.Height[0].$.v || 0);
 
@@ -45,6 +47,11 @@ class Crossword {
       this.reference.push([...row]);
       this.clueMap.push([...row]);
     }
+
+    // TODO: this is to initialize the board in case [0,0] is empty
+    let start = { row: parsedAcross[0].row, col: parsedAcross[0].col };
+    this.cursorX = start.col;
+    this.cursorY = start.row;
 
     for (let i = 0; i < parsedAcross.length; i++) {
       const entry = parsedAcross[i];

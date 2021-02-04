@@ -11,10 +11,19 @@ function clueKey(cn, direction) {
   return `clue-${direction}-${cn}`;
 }
 
+function _decodeHelper(string) {
+  let retval = "";
+  try {
+    retval = decodeURIComponent(string);
+  } finally {
+    return retval;
+  }
+}
+
 function decode(string) {
-  const matches = string.match(/%[0-9][0-9]/g) || [];
+  const matches = string.match(/%[0-9a-zA-Z][0-9a-zA-Z]/g) || [];
   matches.forEach((m) => {
-    string = string.replaceAll(m, decodeURIComponent(m));
+    string = string.replaceAll(m, _decodeHelper(m));
   });
   return string;
 }
